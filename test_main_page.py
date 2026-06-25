@@ -1,6 +1,5 @@
 
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.common.by import By
 from .pages.main_page import MainPage
 
 # pytest -v --tb=line --language=en test_main_page.py
