@@ -66,7 +66,7 @@ class ProductPage(BasePage):
     
     # Получаем общую стоимость корзины со страницы
     def get_basket_total_price(self) -> str | None:
-        text = self.get_raw_element_text(*ProductPageLocators.BASKET_TOTAL_PRICE).split(":")[1] # Разделяем текст по символу ":" и берем вторую часть, которая содержит цену корзины
+        text = self.get_element_text(*ProductPageLocators.BASKET_TOTAL_PRICE).split(':')[1] # Разделяем текст по символу ":" и берем вторую часть, которая содержит цену корзины
         lines = [line.strip() for line in text.splitlines() if line.strip() != ''] # Разделяем текст на строки, удаляем пустые строки и пробелы в начале и конце каждой строки
         price = lines[0] # Берем первую строку, которая содержит цену корзины
         return price
@@ -74,3 +74,12 @@ class ProductPage(BasePage):
     def should_be_product_name_match_in_basket(self, product_name: str):
         name = self.get_element_text(*ProductPageLocators.PRODUCT_NAME_IN_BASKET)
         assert product_name == name, f"Expected product name '{product_name}' does not match name in basket '{name}'"
+
+    # Проверка отсутствия на странице сообщения об успешной покупке
+    def should_not_be_success_message(self):
+        assert self.is_not_element_present(*ProductPageLocators.SUCCESS_MESSAGE), "Success message is presented, but should not be"
+
+    # Проверка исчезновения со страницы сообщения об успешной покупке в течение заданного времени
+    def should_disappear(self, timeout : int = 5):
+        assert self.is_disappeared(*ProductPageLocators.SUCCESS_MESSAGE, timeout), "Success message didn't disappered"
+

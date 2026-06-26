@@ -25,3 +25,33 @@ def test_guest_can_add_product_to_basket(browser, link):
     product_page.solve_quiz_and_get_code() # Решаем задачку в алерте и получаем код
     product_page.should_be_product_name_match_in_basket("Coders at Work")
     product_page.should_be_basket_total_price_match("£19.99")  # Проверяем, что общая стоимость корзины совпадает с ценой товара
+    # time.sleep(100)
+
+# Проверяем, что нет сообщения об успехе после добавления в карзину
+@pytest.mark.parametrize('link', ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0"])
+@pytest.mark.xfail(reason="It's correct")
+def test_guest_cant_see_success_message_after_adding_product_to_basket(browser, link):
+    product_page = ProductPage(browser, link)
+    product_page.open()
+    product_page.add_product_to_basket()
+    product_page.solve_quiz_and_get_code()
+    product_page.should_not_be_success_message()
+
+
+# Проверяем, что нет сообщения об успехе без добавления в карзину
+@pytest.mark.parametrize('link', ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0"])
+def test_guest_cant_see_success_message(browser, link):
+    product_page = ProductPage(browser, link)
+    product_page.open()
+    product_page.should_not_be_success_message()
+
+
+# Проверяем, что сообщение об успехе исчезает
+@pytest.mark.parametrize('link', ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0"])
+@pytest.mark.xfail(reason="It's correct")
+def test_message_disappeared_after_adding_product_to_basket(browser, link):
+    product_page = ProductPage(browser, link)
+    product_page.open()
+    product_page.add_product_to_basket()
+    product_page.solve_quiz_and_get_code()
+    product_page.should_disappear()
