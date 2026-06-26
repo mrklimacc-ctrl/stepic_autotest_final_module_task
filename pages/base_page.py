@@ -7,18 +7,17 @@ import math
 from .locators import BasePageLocators
 
 class BasePage:
-    def __init__(self, browser: WebDriver, url: str, timeout: int = 10):
+    def __init__(self, browser: WebDriver, url: str):
         self.browser = browser
         self.url = url
-        browser.implicitly_wait(timeout)  # Устанавливаем неявное ожидание в timeout секунд
 
     def open(self):
         self.browser.get(self.url)
 
     # Метод для проверки наличия элемента на странице
-    def is_element_present(self, how: str, what: str) -> bool:
+    def is_element_present(self, how: str, what: str, timeout=5) -> bool:
         try:
-            self.browser.find_element(how, what)
+            WebDriverWait(self.browser, timeout).until(EC.presence_of_element_located((how, what)))
         except NoSuchElementException:
             return False
         return True
@@ -48,7 +47,7 @@ class BasePage:
             return None
 
     # Метод проверки, что элекмента НЕТ на странице заданное время
-    def is_not_element_present(self, how: str, what: str, timeout : int = 4):
+    def is_not_element_present(self, how: str, what: str, timeout : int = 5):
         try:
             WebDriverWait(self.browser, timeout).until(EC.presence_of_element_located((how, what)))
         except TimeoutException:
@@ -57,7 +56,7 @@ class BasePage:
         return False
 
     # Метод проверки, что элемент исчезает со страницы
-    def is_disappeared(self, how, what, timeout=4):
+    def is_disappeared(self, how, what, timeout : int = 5):
         try:
             WebDriverWait(self.browser, timeout, 1, TimeoutException).until_not(EC.presence_of_element_located((how, what)))
         except TimeoutException:
@@ -86,3 +85,11 @@ class BasePage:
         
     def should_be_login_link(self):
         assert self.is_element_present(*BasePageLocators.LOGIN_LINK), "Login link is not presented"
+    
+    def go_to_basket(self):
+        basket_btn = WebDriverWait(self.browser, 10).until(EC.element_to_be_clickable(BasePageLocators.GO_TO_BASKET_BUTTON))
+        basket_btn.click()
+    
+    def should_be_authorized_user(self):
+        assert self.is_element_present(*BasePageLocators.USER_ICON), "User icon is not presented," \
+                                                                 " probably unauthorised user"
