@@ -1,5 +1,5 @@
-
 from selenium.webdriver.remote.webdriver import WebDriver
+
 from .pages.main_page import MainPage
 from .pages.login_page import LoginPage
 
